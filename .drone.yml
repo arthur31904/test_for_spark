@@ -1,0 +1,6 @@
+kind: template
+load: general-crane.jsonnet
+data:
+  IMAGENAME: "test_work"
+  VERSION: "2.5.0"
+  cdPath: "cd-test_work"

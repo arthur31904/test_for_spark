@@ -1,0 +1,13 @@
+.idea/*
+*.pyc
+env/*
+venv/*
+*.egg*
+.cache
+.tox
+*.log
+test_work/static/uploads/*
+tests_uploads/*
+supenv
+.pytest_cache/
+
