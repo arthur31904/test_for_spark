@@ -17,7 +17,7 @@ from zipfile import ZipFile
 from schemas.response import SuccessResponse, ErrorResponse
 import os
 from schemas.real_estate_schema import real_estate_back, real_estate_back_list
-
+import json
 import pandas as pd
 
 from pyspark.sql import SparkSession
@@ -168,6 +168,7 @@ class BrandJsonView():
         ## 轉換 樓層 成 數字，並賦予縣市
         for a in range(len(df)):
             df.loc[int(a + 1), "總樓層數"] = chinesetointeger.chinesetointeger(df.loc[int(a + 1)]['總樓層數'])
+            df.loc[int(a + 1), "交易年月日"] = chinesetointeger.changeyear(df.loc[int(a + 1)]['交易年月日'])
             if df.loc[int(a + 1), "鄉鎮市區"] in tai:
                 city = "台北市"
             elif df.loc[int(a + 1), "鄉鎮市區"] in new_tai:
@@ -203,6 +204,7 @@ class BrandJsonView():
 
         }
 
+
         '''
         {
         "date":"",
@@ -214,34 +216,89 @@ class BrandJsonView():
         ]
         }
         '''
-        for a in group_obj:
-            if a[0] not in result_check1 and len(result_check1)<=2:
-                time_slots = []
-                for a in group_obj:
-                    for b in a:
-                        print(b)
-
-                result_part1[a[0]] = {
-                    "city":a[0],
-                    "time_slots":time_slots
-                }
-                result_check1.append(a[0])
-            else:
-                time_slots = []
-                for a in group_obj:
-                    for b in a:
-                        print(b)
-
-                result_part2[a[0]] = {
-                    "city": a[0],
-                    "time_slots": time_slots
-                }
+        use_city_list = ["台北市","新北市","桃園市","高雄市","台中市"]
 
 
-        real_estate_obj_list = {
 
-        }
+        for city in use_city_list:
+            mediation_date = {
+
+            }
+            for b in range(len(group_obj.get_group(city))):
+
+                if city not in result_check1 and len(result_check1)<=2:
+                    this_obj = group_obj.get_group(city).loc[b, '交易年月日']
+
+                    if this_obj in mediation_date:
+
+                        in_obj = {
+                            "district":group_obj.get_group(city).loc[b, '鄉鎮市區'],
+                            "building_state":group_obj.get_group(city).loc[b, '建物型態']
+                        }
+
+                        mediation_date[this_obj].append(in_obj)
+                    else:
+                        mediation_date[this_obj] = []
+                        in_obj = {
+                            "district":group_obj.get_group(city).loc[b, '鄉鎮市區'],
+                            "building_state":group_obj.get_group(city).loc[b, '建物型態']
+                        }
+                        mediation_date[this_obj].append(in_obj)
+
+                    time_slots = []
+
+                    new_list = sorted(mediation_date.keys())
+
+                    for mi in new_list:
+                        out_obj = {
+                            "date":mi,
+                            "events":mediation_date[mi]
+                        }
+                        time_slots.append(out_obj)
+
+
+                    result_part1[city] = {
+                        "city":city,
+                        "time_slots":time_slots
+                    }
+                    result_check1.append(city)
+                else:
+                    this_obj = group_obj.get_group(city).loc[b, '交易年月日']
+
+                    if this_obj in mediation_date:
+
+                        in_obj = {
+                            "district": group_obj.get_group(city).loc[b, '鄉鎮市區'],
+                            "building_state": group_obj.get_group(city).loc[b, '建物型態']
+                        }
+
+                        mediation_date[this_obj].append(in_obj)
+                    else:
+                        mediation_date[this_obj] = []
+                        in_obj = {
+                            "district": group_obj.get_group(city).loc[b, '鄉鎮市區'],
+                            "building_state": group_obj.get_group(city).loc[b, '建物型態']
+                        }
+                        mediation_date[this_obj].append(in_obj)
+
+                    time_slots = []
+
+                    new_list = sorted(mediation_date.keys())
+
+                    for mi in new_list:
+                        out_obj = {
+                            "date": mi,
+                            "events": mediation_date[mi]
+                        }
+                        time_slots.append(out_obj)
+
+
+                    result_part2[city] = {
+                        "city": city,
+                        "time_slots": time_slots
+                    }
 
         return {
-            'real_estate_obj_list': real_estate_obj_list
+            'result_part1': json.dumps(result_part1),
+            'result_part2': json.dumps(result_part2)
         }

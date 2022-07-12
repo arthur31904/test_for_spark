@@ -67,3 +67,21 @@ def chinesetointeger(chinese):
     #         print(the_number)
     return the_number
 
+
+def changeyear(now_date):
+    try:
+        add_c = 1911
+
+        new_year = int(now_date[:-4]) + add_c
+
+        new_month = int(now_date[3:5])
+
+        new_day = int(now_date[5:])
+
+        new_date = str(new_year) + '-' + str(new_month) + '-' + str(new_day)
+
+        return new_date
+    except:
+        pass
+
+
