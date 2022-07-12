@@ -115,13 +115,13 @@ class BrandJsonView():
         搜尋廠商
         """
 
-        data_path = "/Users/nagi/python_project/test_work/python_files/"
+
         ## 整理爬蟲資料
-        use_list = ['/Users/nagi/python_project/test_work/python_files/a_lvr_land_a.csv',
-                    '/Users/nagi/python_project/test_work/python_files/b_lvr_land_a.csv',
-                    '/Users/nagi/python_project/test_work/python_files/e_lvr_land_a.csv',
-                    '/Users/nagi/python_project/test_work/python_files/f_lvr_land_a.csv',
-                    '/Users/nagi/python_project/test_work/python_files/h_lvr_land_a.csv']
+        use_list = ['/test_work/python_files/a_lvr_land_a.csv',
+                    '/test_work/python_files/b_lvr_land_a.csv',
+                    '/test_work/python_files/e_lvr_land_a.csv',
+                    '/test_work/python_files/f_lvr_land_a.csv',
+                    '/test_work/python_files/h_lvr_land_a.csv']
 
         ## 合併 dataFrame
         dataFrame = pd.concat(map(pd.read_csv, use_list), ignore_index=True)
