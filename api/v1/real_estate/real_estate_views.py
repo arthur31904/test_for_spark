@@ -73,7 +73,7 @@ class BrandJsonView():
         f.write(buffer)
         f.close()
 
-        data_path = "/Users/nagi/python_project/test_work/python_files"
+        data_path = "/test_work/python_files"
 
         with ZipFile(file_name) as myzip:
             myzip.extractall(data_path)
